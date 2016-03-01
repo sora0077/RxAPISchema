@@ -7,7 +7,7 @@ import Alamofire
 
 let client = Client()
 
-struct Test: RequestSchema, JSONSerializer {
+struct Test: RequestSchema, JSONSerializer, DebugRequestType {
     
     typealias Response = String
     typealias Expect = [String: AnyObject]?
@@ -23,7 +23,7 @@ struct Test: RequestSchema, JSONSerializer {
     }
 }
 
-client.request(DebugRequest(schema: Test())).subscribeNext { (res) -> Void in
+client.request(Test()).subscribeNext { (res) -> Void in
     print(res)
     
     print("done")

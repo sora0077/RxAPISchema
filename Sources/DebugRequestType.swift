@@ -31,7 +31,7 @@ public struct DebugRequest<Schema: RequestSchema>: DebugRequestType {
     
     let schema: Schema
     
-    public init(schema: Schema) {
+    public init(_ schema: Schema) {
         self.schema = schema
     }
 }
