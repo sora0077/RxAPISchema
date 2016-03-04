@@ -18,24 +18,39 @@ public extension DataSerializer {
     }
 }
 
-public protocol StringSerializer: ResponseSerializerType {}
+public protocol StringSerializer: ResponseSerializerType {
+
+    var stringEncoding: NSStringEncoding? { get }
+}
 public extension StringSerializer {
+    
+    var stringEncoding: NSStringEncoding? { return nil }
     
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<String, NSError> {
         return Request.stringResponseSerializer().serializeResponse
     }
 }
 
-public protocol JSONSerializer: ResponseSerializerType {}
+public protocol JSONSerializer: ResponseSerializerType {
+    
+    var readingOptions: NSJSONReadingOptions { get }
+}
 public extension JSONSerializer {
+    
+    var readingOptions: NSJSONReadingOptions { return .AllowFragments }
     
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<AnyObject, NSError> {
         return Request.JSONResponseSerializer().serializeResponse
     }
 }
 
-public protocol PropertyListSerializer: ResponseSerializerType {}
+public protocol PropertyListSerializer: ResponseSerializerType {
+    
+    var readOptions: NSPropertyListReadOptions { get }
+}
 public extension PropertyListSerializer {
+    
+    var readOptions: NSPropertyListReadOptions { return NSPropertyListReadOptions() }
     
     var serializeResponse: (NSURLRequest?, NSHTTPURLResponse?, NSData?, NSError?) -> Result<AnyObject, NSError> {
         return Request.propertyListResponseSerializer().serializeResponse
