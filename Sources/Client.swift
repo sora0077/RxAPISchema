@@ -248,6 +248,12 @@ private extension Client {
                     encodingCompletion: { result in
                         switch result {
                         case let .Success(request, _, _):
+                            if let statusCode = schema.statusCode {
+                                request.validate(statusCode: statusCode)
+                            }
+                            if let contentType = schema.contentType {
+                                request.validate(contentType: contentType)
+                            }
                             subscriber.onNext(request)
                             subscriber.onCompleted()
                         case let .Failure(error):
@@ -316,19 +322,19 @@ private extension Client {
     
     func makeURLRequest<Schema: RequestSchema>(schema: Schema) throws -> NSURLRequest {
         
-        let (URLRequest, error) = schema.requestEncoding.encode({
-            let URLRequest = NSMutableURLRequest(URL: NSURL(string: schema.path, relativeToURL: schema.baseURL)!)
-            URLRequest.HTTPMethod = schema.method.rawValue
+        let (request, error) = schema.requestEncoding.encode({
+            let request = NSMutableURLRequest(URL: NSURL(string: schema.path, relativeToURL: schema.baseURL)!)
+            request.HTTPMethod = schema.method.rawValue
             if let headers = schema.headers {
                 for (k, v) in headers {
-                    URLRequest.addValue(v, forHTTPHeaderField: k)
+                    request.addValue(v, forHTTPHeaderField: k)
                 }
             }
             
             if let timeoutInterval = schema.timeoutInterval {
-                URLRequest.timeoutInterval = timeoutInterval
+                request.timeoutInterval = timeoutInterval
             }
-            return URLRequest
+            return request
             }(),
             parameters: schema.parameters
         )
@@ -337,7 +343,7 @@ private extension Client {
             throw error
         }
         
-        return URLRequest
+        return request
     }
     
     func makeRequest<Schema: RequestSchema>(schema: Schema) throws -> Request {
